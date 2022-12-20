@@ -23,7 +23,7 @@ public class DataManager {
 	public DataManager(PSNA plugin) {
 		this.plugin = plugin;
 		tempPlayers = new ArrayList<UUID>();
-		//this.loadData();
+		this.loadData();
 	}
 	
 	public void loadData() {	

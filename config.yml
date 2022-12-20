@@ -1,0 +1,4 @@
+GamemodeSettings:
+  enabled: true
+  message: "&#ff3333No puedes cambiar tu modo de juego en esta parcela."
+  supressEssentialsMessage: true

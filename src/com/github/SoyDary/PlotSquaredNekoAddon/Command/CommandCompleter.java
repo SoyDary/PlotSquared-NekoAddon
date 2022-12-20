@@ -1,5 +1,6 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Command;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.Command;
@@ -18,6 +19,19 @@ public class CommandCompleter implements TabCompleter{
 	
 	@Override
 	public List<String> onTabComplete(CommandSender s, Command cmd, String l, String[] a) {
+		if (a.length == 1) {
+	        List<String> commandsList = new ArrayList<>();
+	        List<String> preCommands = new ArrayList<>();
+	        if(s.hasPermission("nekoplots.admin")) {
+	        	commandsList.add("reload");
+	        }
+	        for (String text : commandsList) {
+	          if (text.toLowerCase().startsWith(a[0].toLowerCase()))
+	            preCommands.add(text); 
+	        } 
+	        return preCommands;
+			
+		}
 		return null;
 	}
 

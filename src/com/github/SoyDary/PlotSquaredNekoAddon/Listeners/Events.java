@@ -1,5 +1,6 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Listeners;
 
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -36,6 +37,7 @@ public class Events implements Listener{
     
 	@EventHandler
 	public void onPlayerGameModeChange(PlayerGameModeChangeEvent e) {
+		if(!plugin.getDataManager().config.getBoolean("GamemodeSettings.enabled")) return;
 		Player p = e.getPlayer();
 		Plot plot =  BukkitUtil.adapt(p).getCurrentPlot();
 		if(plot == null) return;
@@ -66,8 +68,10 @@ public class Events implements Listener{
 	public void checkCancelled(PlayerGameModeChangeEvent e, Player p, Plot plot, String mode, String plotMode) {
 		if(!mode.equals(plotMode)) {
 			if(plot.isOwner(p.getUniqueId()) || plot.isAdded(p.getUniqueId()) || plot.getMembers().contains(p.getUniqueId()) || p.hasPermission("plots.gamemode.bypass")) return;
-			p.sendActionBar(plugin.getUtils().color("&cNo puedes cambiar tu modo de juego en esta parcela."));
-			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, SoundCategory.MASTER,1, 1);
+			p.sendActionBar(plugin.getUtils().color(plugin.getDataManager().config.getString("GamemodeSettings.message")));
+			p.
+			playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, SoundCategory.MASTER,1, 1);
+			if(plugin.protocolmanager != null ) plugin.protocolmanager.tempPlayers.add(p.getUniqueId());
 			e.setCancelled(true);
 		}
 	}
