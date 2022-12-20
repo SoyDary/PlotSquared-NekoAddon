@@ -1,6 +1,5 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Listeners;
 
-import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
