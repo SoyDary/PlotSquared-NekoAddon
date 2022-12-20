@@ -1,0 +1,6 @@
+name: PlotSquared-NekoAddon
+main: com.github.SoyDary.PlotSquaredNekoAddon.PSNA
+depend: [PlotSquared]
+author: Dariela
+version: 1.0
+api-version: 1.13
