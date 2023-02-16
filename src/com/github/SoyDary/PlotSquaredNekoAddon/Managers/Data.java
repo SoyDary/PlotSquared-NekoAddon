@@ -26,6 +26,7 @@ public class Data {
 	public Map<String, FileConfiguration> configs;
 	public Map<UUID, String> names;
 	private Map<String, ProfileColor> profiles;
+	boolean isReady = false;
 		
 	public Data(PSNA plugin) {
 		this.offhandItems = new HashMap<Player, ItemStack>();
@@ -33,7 +34,25 @@ public class Data {
 		this.names = new HashMap<UUID, String>();
 		this.profiles = new HashMap<String, ProfileColor>();
 		this.plugin = plugin;
+		loadPlayersData();
 		
+	}
+	
+	private void loadPlayersData() {
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+		    @Override
+		    public void run() {
+		    	File dataFolder = new File(plugin.getDataFolder()+"/data/");
+		    	File[] files = dataFolder.listFiles();
+		    	for(File file : files) {
+		    		if(file.getName().length() < 40 || !file.getName().endsWith(".yml")) continue;
+		    		String uuid = file.getName().replaceAll(".yml", "");
+		    		getConfiguration(uuid);
+		    		getPlayerName(UUID.fromString(uuid));
+		    	}
+		    	isReady = true;
+		    }
+		});
 	}
 	
 	public String getPlayerName(UUID uuid) {

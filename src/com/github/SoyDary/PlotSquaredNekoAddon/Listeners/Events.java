@@ -73,8 +73,8 @@ public class Events implements Listener{
 			Player p = e.getPlayer();	
 			if(e.getMessage().equals("/plots")) {
 				e.setCancelled(true);	
-				PlotsMenu menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Owned);
-				if(menu.plots_ammount == 0) {
+				PlotsMenu menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Owned, 0);
+				if(menu.plots.isEmpty()) {
 					p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Usa &#d9d9d9/p auto &7para conseguir una parcela."));
 					return;
 				}
@@ -93,8 +93,8 @@ public class Events implements Listener{
 		            	return;
 		            } else {
 		            	UUID uuid = uuids.toArray(new UUID[0])[0];
-						PlotsMenu menu = new PlotsMenu(p, uuid, MenuType.Owned);
-						if(menu.plots_ammount == 0) {
+						PlotsMenu menu = new PlotsMenu(p, uuid, MenuType.Owned, 0);
+						if(menu.plots.isEmpty()) {
 							p.sendMessage(plugin.getUtils().component(plugin.messages.getString("NO_PLOTS"), p, null));
 
 							return;
@@ -144,7 +144,7 @@ public class Events implements Listener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onTabComplete(TabCompleteEvent e) {
 		if(e.getBuffer().startsWith("/plots ")) {
 			if(!(e.getSender() instanceof Player p)) return;
@@ -158,6 +158,7 @@ public class Events implements Listener{
 			 e.setCompletions(result);
 		}
 	}
+
 	
 	
     @EventHandler

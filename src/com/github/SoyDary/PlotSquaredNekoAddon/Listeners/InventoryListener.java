@@ -44,17 +44,27 @@ public class InventoryListener implements Listener {
 				if(menu.owner == null || !menu.owner.equals(p.getUniqueId())) return;
 				ProfileColor color = Enums.getNext(ProfileColor.valueOf(inv.getItem(0).getType().name().split("_STAINED_GLASS_PANE")[0]));
 			    plugin.getData().setProfileColor(menu.owner.toString(), color);
-				PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned);
+				PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 				p.openInventory(nm.getInventory());	
 				return;		
 			}
 			if(tag.equals("OWNED_PLOTS")) {	
-				menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Owned);
+				menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Owned, 0);
 				p.openInventory(menu.getInventory());	
 				return;
 			}
 			if(tag.equals("TRUSTED_PLOTS")) {	
-				menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Trusted);
+				menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Trusted, 0);
+				p.openInventory(menu.getInventory());	
+				return;
+			}
+			if(tag.equals("NEXT_PAGE")) {	
+				menu = new PlotsMenu(p, menu.owner, menu.type, menu.page+1);
+				p.openInventory(menu.getInventory());	
+				return;
+			}
+			if(tag.equals("PREV_PAGE")) {	
+				menu = new PlotsMenu(p, menu.owner, menu.type, menu.page-1);
 				p.openInventory(menu.getInventory());	
 				return;
 			}
@@ -67,12 +77,12 @@ public class InventoryListener implements Listener {
 					String mainPlot = menu.mainPlot == null ? "" : menu.mainPlot.path;
 					if(!mainPlot.equals(tag)) {
 						plugin.getData().setMainPlot(menu.owner.toString(), tag);
-						PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned);
+						PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 						p.openInventory(nm.getInventory());	
 						p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Parcela seleccionada como principal."));
 					} else {
 						plugin.getData().setMainPlot(menu.owner.toString(), null);
-						PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned);
+						PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 						p.openInventory(nm.getInventory());		
 						p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Parcela eliminada como principal."));
 					}
@@ -89,7 +99,7 @@ public class InventoryListener implements Listener {
 				}
 				if(cursor != null && !cursor.getType().name().equals("AIR")) {	
 					nekoplot.setItem(cursor);
-					PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned);
+					PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 					p.openInventory(nm.getInventory());		
 					return;
 				}

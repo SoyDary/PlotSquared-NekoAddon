@@ -117,6 +117,20 @@ public class DataManager {
 		ItemUtils.setData(STARBOARD, "plot_item", "STARBOARD");
 		this.guiItems.put(ItemKey.STARBOARD, STARBOARD);
 		
+		ItemStack PREV_PAGE = plugin.getUtils().getHeadfromUrl("a2f0425d64fdc8992928d608109810c1251fe243d60d175bed427c651cbe");
+		ItemMeta PREV_PAGE_META = PREV_PAGE.getItemMeta();
+		PREV_PAGE_META.displayName(plugin.getUtils().color("&6&lPágina anterior"));
+		PREV_PAGE.setItemMeta(PREV_PAGE_META);
+		ItemUtils.setData(PREV_PAGE, "plot_item", "PREV_PAGE");
+		this.guiItems.put(ItemKey.PREV_PAGE, PREV_PAGE);
+		
+		ItemStack NEXT_PAGE = plugin.getUtils().getHeadfromUrl("6d865aae2746a9b8e9a4fe629fb08d18d0a9251e5ccbe5fa7051f53eab9b94");
+		ItemMeta NEXT_PAGE_META = NEXT_PAGE.getItemMeta();
+		NEXT_PAGE_META.displayName(plugin.getUtils().color("&6&lPágina siguiente"));
+		NEXT_PAGE.setItemMeta(NEXT_PAGE_META);
+		ItemUtils.setData(NEXT_PAGE, "plot_item", "NEXT_PAGE");
+		this.guiItems.put(ItemKey.NEXT_PAGE, NEXT_PAGE);
+		
 	}
 	
 	private void loadChatComponents() {

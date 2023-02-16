@@ -235,6 +235,7 @@ public class Utils {
 	}
 	
 	public ItemStack getHeadfromUrl(String url) {
+		if(url.length() < 80) url = "http://textures.minecraft.net/texture/"+url;
 	    ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
 	    if(url.isEmpty()) return head;	   
 	    SkullMeta headMeta = (SkullMeta) head.getItemMeta();

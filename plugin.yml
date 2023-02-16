@@ -3,7 +3,7 @@ main: com.github.SoyDary.PlotSquaredNekoAddon.PSNA
 depend: [PlotSquared, PlaceholderAPI]
 softdepend: [ProtocolLib, Essentials]
 author: Dariela
-version: 2.0
+version: 2.0.5
 api-version: 1.13
 commands:
  plotsquared-nekoaddon:

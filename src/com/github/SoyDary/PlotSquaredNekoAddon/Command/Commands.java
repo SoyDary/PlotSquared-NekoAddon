@@ -125,7 +125,9 @@ public class Commands implements CommandExecutor {
 		
 	}
 	private boolean test(CommandSender s, String[] a) {
-
+		Player p = (Player)s;
+		PlotsMenu menu = new PlotsMenu(p, p.getUniqueId(),MenuType.Owned, 1);
+		p.openInventory(menu.getInventory());
 		return true;
 	}
 	

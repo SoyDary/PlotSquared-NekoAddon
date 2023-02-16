@@ -80,6 +80,7 @@ public class NekoPlot {
 	}
 	
 	public boolean canJoin(Player p) {
+		if(!p.hasPermission("multiverse.access.")) return false;
 		if(plot.isOwner(p.getUniqueId()) || plot.getMembers().contains(p.getUniqueId())) return true;
 		if(plot.isDenied(p.getUniqueId()) && !p.hasPermission("plots.visit.denied")) return false;
 		if(plot.getDenied().contains(DBFunc.EVERYONE) && !plot.isAdded(p.getUniqueId()))  return false;

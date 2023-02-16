@@ -1,9 +1,7 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Gui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -19,6 +17,7 @@ import com.github.SoyDary.PlotSquaredNekoAddon.Objects.NekoItem;
 import com.github.SoyDary.PlotSquaredNekoAddon.Objects.NekoPlot;
 import com.github.SoyDary.PlotSquaredNekoAddon.Utils.Enums.MenuType;
 import com.github.SoyDary.PlotSquaredNekoAddon.Utils.Enums.ProfileColor;
+import com.google.common.collect.Lists;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -30,16 +29,18 @@ public class PlotsMenu implements InventoryHolder {
 	public UUID owner;
 	Player viewer;
 	Inventory inv;
-	Map<String, List<Plot>> plots;
-	public Integer plots_ammount = 0;
+	List<List<Plot>> sections;
 	ProfileColor color;
+	public List<Plot> plots;
 	public MenuType type;
 	public NekoPlot mainPlot;
 	public Integer trusted_plots_ammount = 0;
+	public Integer page = 0;
 	
-	public PlotsMenu(Player viewer, UUID owner, MenuType type) {
+	public PlotsMenu(Player viewer, UUID owner, MenuType type, int page) {
 		this.owner = owner;
 		this.viewer = viewer;
+		this.page = page;
 		this.type = type;
 		this.color = plugin.getData().getProfileColor(owner.toString());	
 		this.loadPlots();
@@ -87,15 +88,13 @@ public class PlotsMenu implements InventoryHolder {
 		if(type == MenuType.Owned && this.mainPlot != null) {
 			if(viewer.hasPermission("multiverse.access."+mainPlot.plot.getWorldName()) && (canJoin(mainPlot.plot) || viewer.hasPermission("plots.visit.denied"))) {
 			    inv.addItem(mainPlot.getItem(viewer, type, true));
-				plots.get(mainPlot.plot.getWorldName()).remove(mainPlot.plot);
+				plots.remove(mainPlot.plot);
 			}
 		}
-		for(String world : plugin.getDataManager().worldSorter) {
-			for(Plot p : plots.get(world)) {
-				NekoPlot plot = new NekoPlot(p);
-				ItemStack item = plot.getItem(viewer, type, false);		
-				inv.addItem(item);
-			}
+		for(Plot p : sections.get(page)) {
+			NekoPlot plot = new NekoPlot(p);
+			ItemStack item = plot.getItem(viewer, type, false);		
+			inv.addItem(item);
 		}
 		for(int i = 10; i < inv.getSize()-10; i++) {
 			if(inv.getItem(i) == null) {
@@ -143,10 +142,9 @@ public class PlotsMenu implements InventoryHolder {
 	}
 	
 	private void loadOwnedPlots() {		
-		this.plots = new HashMap<String, List<Plot>>();
+		this.plots = new ArrayList<Plot>();
 		boolean is_admin = viewer.hasPermission("plots.visit.denied");
 		for(String world : plugin.getDataManager().worldSorter) {
-			plots.put(world, new ArrayList<Plot>());
 			if(!viewer.hasPermission("multiverse.access."+world)) continue;
 			List<Plot> queryplots = PlotQuery.newQuery().ownedBy(owner)
 					.inWorld(world)
@@ -154,18 +152,15 @@ public class PlotsMenu implements InventoryHolder {
 					.withSortingStrategy(SortingStrategy.SORT_BY_CREATION).asList();
 			for(Plot plot : queryplots) {
 				if((!is_admin && !canJoin(plot)) || plot.getOwners().contains(DBFunc.SERVER)) continue;	
-				List<Plot> plotList = plots.get(plot.getWorldName());
-				plotList.add(plot);
-				this.plots.put(plot.getWorldName(), plotList);
-				this.plots_ammount++;
+				plots.add(plot);
 			}			
 		}	
+		sections = Lists.partition(plots, 28);
 	}
 	
 	private void loadTustedPlots() {
-		this.plots = new HashMap<String, List<Plot>>();
+		this.plots = new ArrayList<Plot>();
 		for(String world : plugin.getDataManager().worldSorter) {
-			plots.put(world, new ArrayList<Plot>());
 			if(!viewer.hasPermission("multiverse.access."+world)) continue;	
 			List<Plot> queryplots = PlotQuery.newQuery().withMember(owner)
 					.inWorld(world)
@@ -173,13 +168,11 @@ public class PlotsMenu implements InventoryHolder {
 					.withSortingStrategy(SortingStrategy.SORT_BY_CREATION).asList();
 			for(Plot plot : queryplots) {
 				if(plot.isOwner(owner) || plot.getOwners().contains(DBFunc.SERVER)) continue;	
-				List<Plot> plotList = plots.get(plot.getWorldName());
-				plotList.add(plot);
-				this.plots.put(plot.getWorldName(), plotList);
-				this.plots_ammount++;
+				plots.add(plot);
 			}
 			
 		}	
+		sections = Lists.partition(plots, 28);
 	}
 	
 	
@@ -196,10 +189,13 @@ public class PlotsMenu implements InventoryHolder {
 			if(slot >= inv.getSize() || slot < 0) continue;
 			inv.setItem(slot, item);
 		}	
-		if(viewer.getUniqueId().equals(owner)) {	
-			menuItem();
+		if(type == MenuType.Owned || type == MenuType.Trusted) {	
+			if(sections.size() > page+1) inv.setItem(inv.getSize()-4, NekoItem.NEXT_PAGE);
+			if(page > 0) inv.setItem(inv.getSize()-6, NekoItem.PREV_PAGE);
 		}
-		//inv.setItem(inv.getSize()-2, NekoItem.STARBOARD);
+		if(viewer.getUniqueId().equals(owner)) {	
+			extraItems();
+		}
 	}
 	
 	private int[] getSlots() {
@@ -208,15 +204,15 @@ public class PlotsMenu implements InventoryHolder {
 		return slots;
 	}
 	
-	private void menuItem() {
+	private void extraItems() {
 		if(type == MenuType.Owned && this.trusted_plots_ammount > 0) inv.setItem(inv.getSize()-1, NekoItem.TRUSTED_PLOTS);		
 		if(type == MenuType.Trusted) inv.setItem(inv.getSize()-1, NekoItem.OWNED_PLOTS);
 	}
 	
 	private int invSize() {
-		if(plots_ammount >= 22) return 54;
-		if(plots_ammount >= 15) return 45;
-		if(plots_ammount >= 8) return 36;
+		if(plots.size() >= 22) return 54;
+		if(plots.size() >= 15) return 45;
+		if(plots.size() >= 8) return 36;
 		return 27;		
 	}
 	
