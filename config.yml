@@ -2,3 +2,87 @@ GamemodeSettings:
   enabled: true
   message: "&#ff3333No puedes cambiar tu modo de juego en esta parcela."
   supressEssentialsMessage: true
+  
+LikeMessage:
+  enabled: true
+  delay: 20
+  message: "&e&l| &f%like_message% %like%"
+PlotsMenu:
+  StarBoardTitle: "&e☆ &#ffff00&lParcelas más votadas "
+  PlayerPlotsTitle: "&#ff8c1a&lMenú de parcelas"
+  OtherPlayerPlotsTitle: "&#ff8c1aParcelas de %owner-name%"
+  TrustedPlotsTitle: "&e&lParcelas confiadas"
+  WorldSorter:
+  - MundoCreativo
+  - creativo
+  - constructores
+  WorldAlias:
+    MundoCreativo: "&#ccff99(Creativo)"
+    creativo: "&7(Mundo antiguo)"
+    constructores: "&#809fff(Constructores)"
+  MainPlotIcon: "&6⌂ "
+  DefaultPlotName: "Parcela de %owner-name%"
+  #Las variables que se pongan aquí se van a ignorar al establecer el lore del item si es que cumplen la condición
+  #por ejemplo 'plot-likes%;0' que hace que no se vea la linea de las estrellas si la cantidad es 0
+  IgnoredPlaceholders:
+  - '%plot-mode%;default'
+  - '%plot-description%;default'
+  #Posibles variables:
+  #%owner-name%
+  #%owner-color%
+  #%plot-key%
+  #%plot-description%
+  #%plot-mainicon%
+  #%plot-likes%
+  #%plot-alias%
+  #%plot-customname%
+  #%plot-id%
+  #%plot-mode%
+  #%plot-world%
+  Items:
+    PlotSelector:
+      name: "%plot-mainicon%%owner-color%&l%plot-customname%"
+      lore:
+      - ''
+      - "&7%plot-description%\n "
+      - '&f&lParcela: &#80ff80%plot-id% &7%plot-world%' 
+      - '&f&lEstrellas: &#ffe699%plot-likes%&#ffff00☆'
+      - '&f&lModo: &#ffbf80%plot-mode%'
+      - ''
+      - '&#00ace6¡Clic para teletransportarse!'
+      trusted_lore:
+      - ''
+      - "&7%plot-description%\n "
+      - '&f&lDueño: &3%owner-name%'
+      - '&f&lParcela: &#80ff80%plot-id% &7%plot-world%' 
+      - '&f&lEstrellas: &#ffe699%plot-likes%&#ffff00☆'
+      - '&f&lModo: &#ffbf80%plot-mode%'
+      - ''
+      - '&#00ace6¡Clic para teletransportarse!' 
+      owner_extra_lore:
+      - ''
+      - '&#00e673[&#66ffb3Shift + Clic para cambiar nombre&#00e673]'
+#Componentes especiales para hacer mensajes con partes especiales con hover o clics.
+#Posibles 'ClickAction':
+# SUGGEST_COMMAND	
+# RUN_COMMAND
+# COPY_TO_CLIPBOARD			
+# SUGGEST_TEXT  
+ChatComponents:
+  like_message:
+    Label: "&f¿Quieres dar una estrella a esta parcela?"
+    ClickAction: RUN_COMMAND
+    Actions: '/starboard alerts'
+    Hover:
+    - '&8[&c&l!&8] &7Puedes desactivar este mensaje'
+    - '    &7haciendo clic aquí.'
+  like:  
+    Label: "&#ffc61a(&#ffff00☆☆☆&#ffc61a)"
+    ClickAction: 'RUN_COMMAND'
+    Actions: "/psna like %plot-key%" #<-- Se puede usar el /p like default pero este es para poder like a parcelas de las que ya te saliste
+    Hover:
+    - '&#ffff00☆ &fEstrellas: &e%plot-likes%'
+    - '&8&l&m                                 '
+    - '&fClic para dar una estrella a' 
+    - '&fla parcela de &e%owner-name%'
+    - '&8&l&m                                 '

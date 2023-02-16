@@ -1,0 +1,8 @@
+LIKE_MESSAGE_STATE_ENABLED: "Has &cdesactivado &flas sugerencias de votación de parcelas."
+LIKE_MESSAGE_STATE_DISABLED: "Has &aactivado &flas sugerencias de votación de parcelas."
+
+PLOT_NAMING_SUCCESFULL: "&8[&6P2&8] &7Nombre de parcela actualizado."
+PLOT_NAMING_CANCELLED: "&8[&6P2&8] &7Acción cancelada."
+PLOT_NAMING_DELETED: "&8[&6P2&8] &7Nombre de parcela eliminado."
+NO_PLOTS: "&8[&6P2&8] &cEste jugador no tiene ninguna parcela a la que puedas ir."
+PLAYER_NOT_FOUND: "&8[&6P2&8] &cJugador no encontrado: &7%player%&c."
