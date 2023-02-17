@@ -95,12 +95,7 @@ public class InventoryListener implements Listener {
 					p.sendMessage(plugin.getUtils().color("&#ffff66↓ &#ffbf00&lEscribe un nombre para la parcela &#ffff66↓"));
 					p.sendMessage(plugin.getUtils().color("&#ffa64d↓      &7&o(Usa &#e6e6e6&o-remove &7&opara reestablecer)      &#ffa64d↓"));
 					p.sendMessage(plugin.getUtils().color(""));
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {	        
-			            @Override
-			            public void run() {	         
-			            	p.closeInventory();
-			            }         
-			        }, 1l);
+					closeInventory(p);
 					plugin.getDataManager().plotNaming.put(p, nekoplot);
 					return;
 				}
@@ -142,5 +137,13 @@ public class InventoryListener implements Listener {
 		plugin.getData().offhandItems.remove(e.getPlayer());
 	}
 	
-
+	private void closeInventory(Player p) {			
+		Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+			@Override
+			public void run() {
+				p.closeInventory();
+			}
+			
+		}, 2L);
+	}
 }
