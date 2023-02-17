@@ -1,6 +1,7 @@
 
 package com.github.SoyDary.PlotSquaredNekoAddon.Listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -72,6 +73,7 @@ public class InventoryListener implements Listener {
 			NekoPlot nekoplot = new NekoPlot(tag);
 			if(nekoplot.plot == null) return;
 			ItemStack cursor = e.getCursor();
+			
 			if(menu.type == MenuType.Owned && (menu.owner.equals(p.getUniqueId()) || p.hasPermission("nekoplots.admin"))) {
 				if(e.getClick().name().equals("SHIFT_RIGHT")) {	
 					String mainPlot = menu.mainPlot == null ? "" : menu.mainPlot.path;
@@ -92,8 +94,13 @@ public class InventoryListener implements Listener {
 					p.sendMessage(plugin.getUtils().color("&#ff8000&m                                                            "));
 					p.sendMessage(plugin.getUtils().color("&#ffff66↓ &#ffbf00&lEscribe un nombre para la parcela &#ffff66↓"));
 					p.sendMessage(plugin.getUtils().color("&#ffa64d↓      &7&o(Usa &#e6e6e6&o-remove &7&opara reestablecer)      &#ffa64d↓"));
-					p.sendMessage("");
-					p.closeInventory();
+					p.sendMessage(plugin.getUtils().color(""));
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {	        
+			            @Override
+			            public void run() {	         
+			            	p.closeInventory();
+			            }         
+			        }, 1l);
 					plugin.getDataManager().plotNaming.put(p, nekoplot);
 					return;
 				}
@@ -104,10 +111,11 @@ public class InventoryListener implements Listener {
 					return;
 				}
 			}
+			
 			TeleportCause cause = TeleportCause.COMMAND_VISIT;
 			if(MenuType.Owned == menu.type && menu.owner.equals(p.getUniqueId())) cause = TeleportCause.COMMAND_HOME;
 			nekoplot.teleportPlayer(p, cause);
-			p.closeInventory();
+			
 			return;
 		}
 	}	

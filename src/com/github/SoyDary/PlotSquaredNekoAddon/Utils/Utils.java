@@ -226,7 +226,7 @@ public class Utils {
 		if(texture.length() < 80) texture = "http://textures.minecraft.net/texture/"+texture;
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 	    SkullMeta headMeta = (SkullMeta) head.getItemMeta();
-	    PlayerProfile profile = Bukkit.createProfile(uuid);
+	    PlayerProfile profile = Bukkit.createProfile(uuid, plugin.getData().getPlayerName(uuid));
 	    String encodedData = Base64Coder.encodeString(String.format("{textures:{SKIN:{url:\"%s\"}}}", texture));
 	    profile.setProperty(new ProfileProperty("textures", encodedData));
 	    headMeta.setPlayerProfile(profile);
@@ -249,7 +249,7 @@ public class Utils {
 	
 	public void setNaming(Player p, Component message) {
 		String name = parseHex(LegacyComponentSerializer.legacyAmpersand().serialize(message));
-	    if (PlainTextComponentSerializer.plainText().serialize(message).length() >= 35) {
+	    if (PlainTextComponentSerializer.plainText().serialize(message).length() >= 45) {
 		       p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Introduce un nombre más corto."));
 		       return;
 	    }

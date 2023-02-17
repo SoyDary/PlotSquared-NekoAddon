@@ -2,9 +2,8 @@ package com.github.SoyDary.PlotSquaredNekoAddon.Listeners;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -31,10 +30,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.FlyFlag;
 import com.plotsquared.core.plot.flag.implementations.GamemodeFlag;
 import com.plotsquared.core.plot.flag.implementations.GuestGamemodeFlag;
-import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
-import com.plotsquared.core.util.query.PlotQuery;
-
 import io.papermc.paper.event.player.AsyncChatEvent;
 
 public class Events implements Listener{
@@ -84,26 +80,17 @@ public class Events implements Listener{
 			if(e.getMessage().startsWith("/plots ")) {
 				e.setCancelled(true);	
 				String[] a = e.getMessage().split("/plots ")[1].split(" ");
-		        PlayerManager.getUUIDsFromString(a[0], (uuids, throwable) -> {
-		            if (throwable instanceof TimeoutException) {   
-		            	p.sendMessage(plugin.getUtils().component(plugin.messages.getString("PLAYER_NOT_FOUND").replaceAll("%player%", a[0]), p, null));
-		            	return;		           
-		            } else if (throwable != null || uuids.size() != 1) {
-		            	p.sendMessage(plugin.getUtils().component(plugin.messages.getString("PLAYER_NOT_FOUND").replaceAll("%player%", a[0]), p, null));
-		            	return;
-		            } else {
-		            	UUID uuid = uuids.toArray(new UUID[0])[0];
-						PlotsMenu menu = new PlotsMenu(p, uuid, MenuType.Owned, 0);
-						if(menu.plots.isEmpty()) {
-							p.sendMessage(plugin.getUtils().component(plugin.messages.getString("NO_PLOTS"), p, null));
-
-							return;
-						}
-						p.openInventory(menu.getInventory());	
-						e.setCancelled(true);
-		            } 
-		          });
-
+				OfflinePlayer of = plugin.getUtils().getUser(a[0]);
+				if(of == null) {
+	            	p.sendMessage(plugin.getUtils().component(plugin.messages.getString("PLAYER_NOT_FOUND").replaceAll("%player%", a[0]), p, null));
+	            	return;		   
+				}
+				PlotsMenu menu = new PlotsMenu(p, of.getUniqueId(), MenuType.Owned, 0);
+				if(menu.plots.isEmpty()) {
+					p.sendMessage(plugin.getUtils().component(plugin.messages.getString("NO_PLOTS"), p, null));
+					return;
+				}
+				p.openInventory(menu.getInventory());	
 			}
 		}
 		if(e.getMessage().matches("^/(p|plot|ps|plotsquared|p2|2|plotme) .*$")) {
@@ -124,22 +111,13 @@ public class Events implements Listener{
 			if(a[1].toLowerCase().equals("visit") | a[1].toLowerCase().equals("v")) {
 				if(a.length == 3) {
 					String name = a[2];
-			        PlayerManager.getUUIDsFromString(name, (uuids, throwable) -> {
-			            if (throwable instanceof TimeoutException) {
-			              return;
-			            } else if (throwable != null || uuids.size() != 1) {
-			              return;
-			            } else {
-			            	UUID uuid = uuids.toArray(new UUID[0])[0];
-			            	if(PlotQuery.newQuery().ownedBy(uuid).whereBasePlot().asList().size() == 0) return;
-			            	NekoPlot mainplot = plugin.getData().getMainPlot(uuid.toString());
-							if(mainplot == null || !mainplot.canJoin(p)) return;
-							mainplot.teleportPlayer(p, TeleportCause.COMMAND_VISIT);
-							e.setCancelled(true);
-			            } 
-			          });		      
+					OfflinePlayer of = plugin.getUtils().getUser(name);
+					if(of == null) return;
+	            	NekoPlot mainplot = plugin.getData().getMainPlot(of.getUniqueId().toString());
+						if(mainplot == null || !mainplot.canJoin(p)) return;
+						mainplot.teleportPlayer(p, TeleportCause.COMMAND_VISIT);
+						e.setCancelled(true);
 				}
-				return;
 			}
 		}
 	}

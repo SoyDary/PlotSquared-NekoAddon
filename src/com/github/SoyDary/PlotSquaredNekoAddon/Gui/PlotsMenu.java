@@ -82,17 +82,18 @@ public class PlotsMenu implements InventoryHolder {
 		
 	}
 	
+	
 	@Override
 	public Inventory getInventory() {	
 		if(type == MenuType.StarBoard) return this.inv;
-		if(type == MenuType.Owned && this.mainPlot != null) {
-			if(viewer.hasPermission("multiverse.access."+mainPlot.plot.getWorldName()) && (canJoin(mainPlot.plot) || viewer.hasPermission("plots.visit.denied"))) {
-			    inv.addItem(mainPlot.getItem(viewer, type, true));
-				plots.remove(mainPlot.plot);
-			}
+		boolean HMP = false;
+		if(this.mainPlot != null && plots.contains(this.mainPlot.plot)) {
+			    if(page == 0) inv.addItem(mainPlot.getItem(viewer, type, true));
+			    HMP = true;
 		}
 		for(Plot p : sections.get(page)) {
 			NekoPlot plot = new NekoPlot(p);
+			if(HMP && plot.path.equals(mainPlot.path)) continue;
 			ItemStack item = plot.getItem(viewer, type, false);		
 			inv.addItem(item);
 		}

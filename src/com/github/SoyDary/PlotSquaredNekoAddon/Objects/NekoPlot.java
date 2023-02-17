@@ -27,6 +27,7 @@ import com.plotsquared.core.plot.flag.implementations.GuestGamemodeFlag;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class NekoPlot {
 	
@@ -80,7 +81,7 @@ public class NekoPlot {
 	}
 	
 	public boolean canJoin(Player p) {
-		if(!p.hasPermission("multiverse.access.")) return false;
+		if(!p.hasPermission("multiverse.access."+plot.getWorldName())) return false;
 		if(plot.isOwner(p.getUniqueId()) || plot.getMembers().contains(p.getUniqueId())) return true;
 		if(plot.isDenied(p.getUniqueId()) && !p.hasPermission("plots.visit.denied")) return false;
 		if(plot.getDenied().contains(DBFunc.EVERYONE) && !plot.isAdded(p.getUniqueId()))  return false;
@@ -193,7 +194,7 @@ public class NekoPlot {
 	private String getDescription() {
 		String desc = plot.getFlag(DescriptionFlag.class).toString();
 		if(desc.equals("")) return "default";
-		if(desc.length() > 30) return desc.substring(30);
+		if(PlainTextComponentSerializer.plainText().serialize(plugin.getUtils().color(desc)).length() > 40) return desc.substring(0, 40);
 		return desc;
 	}
 	private ItemStack clearItemData(ItemStack item) {
