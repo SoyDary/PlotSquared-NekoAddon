@@ -2,6 +2,7 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,35 +46,39 @@ public class InventoryListener implements Listener {
 				if(menu.owner == null || !menu.owner.equals(p.getUniqueId())) return;
 				ProfileColor color = Enums.getNext(ProfileColor.valueOf(inv.getItem(0).getType().name().split("_STAINED_GLASS_PANE")[0]));
 			    plugin.getData().setProfileColor(menu.owner.toString(), color);
-				PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
+				PlotsMenu nm = new PlotsMenu(p, menu.owner, menu.type, menu.page);
 				p.openInventory(nm.getInventory());	
+				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 4, 1);
 				return;		
 			}
 			if(tag.equals("OWNED_PLOTS")) {	
 				menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Owned, 0);
 				p.openInventory(menu.getInventory());	
+				p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 2, 1);
 				return;
 			}
 			if(tag.equals("TRUSTED_PLOTS")) {	
 				menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Trusted, 0);
 				p.openInventory(menu.getInventory());	
+				p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 2, 1);
 				return;
 			}
 			if(tag.equals("NEXT_PAGE")) {	
 				menu = new PlotsMenu(p, menu.owner, menu.type, menu.page+1);
 				p.openInventory(menu.getInventory());	
+				p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 2, 1);
 				return;
 			}
 			if(tag.equals("PREV_PAGE")) {	
 				menu = new PlotsMenu(p, menu.owner, menu.type, menu.page-1);
 				p.openInventory(menu.getInventory());	
+				p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 2, 1);
 				return;
 			}
 			if(tag.equals("null")) return;
 			NekoPlot nekoplot = new NekoPlot(tag);
 			if(nekoplot.plot == null) return;
-			ItemStack cursor = e.getCursor();
-			
+			ItemStack cursor = e.getCursor();				
 			if(menu.type == MenuType.Owned && (menu.owner.equals(p.getUniqueId()) || p.hasPermission("nekoplots.admin"))) {
 				if(e.getClick().name().equals("SHIFT_RIGHT")) {	
 					String mainPlot = menu.mainPlot == null ? "" : menu.mainPlot.path;
@@ -82,11 +87,13 @@ public class InventoryListener implements Listener {
 						PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 						p.openInventory(nm.getInventory());	
 						p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Parcela seleccionada como principal."));
+						p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 2, 1);
 					} else {
 						plugin.getData().setMainPlot(menu.owner.toString(), null);
 						PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 						p.openInventory(nm.getInventory());		
 						p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Parcela eliminada como principal."));
+						p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 2, 1);
 					}
 					return;
 				}
@@ -96,13 +103,14 @@ public class InventoryListener implements Listener {
 					p.sendMessage(plugin.getUtils().color("&#ffa64d↓      &7&o(Usa &#e6e6e6&o-remove &7&opara reestablecer)      &#ffa64d↓"));
 					p.sendMessage(plugin.getUtils().color(""));
 					closeInventory(p);
-					plugin.getDataManager().plotNaming.put(p, nekoplot);
+					plugin.getDataManager().plotNaming.put(p, nekoplot);				
 					return;
 				}
 				if(cursor != null && !cursor.getType().name().equals("AIR")) {	
 					nekoplot.setItem(cursor);
 					PlotsMenu nm = new PlotsMenu(p, menu.owner, MenuType.Owned, menu.page);
 					p.openInventory(nm.getInventory());		
+					p.playSound(p.getLocation(), Sound.ITEM_BUNDLE_INSERT, 5, 1);
 					return;
 				}
 			}
