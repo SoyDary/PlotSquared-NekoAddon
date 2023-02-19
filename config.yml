@@ -5,7 +5,7 @@ GamemodeSettings:
   
 LikeMessage:
   enabled: true
-  delay: 20
+  delay: 15
   message: "&e&l| &f%like_message% %like%"
 PlotsMenu:
   StarBoardTitle: "&e☆ &#ffff00&lParcelas más votadas "
@@ -74,8 +74,8 @@ ChatComponents:
     ClickAction: RUN_COMMAND
     Actions: '/starboard alerts'
     Hover:
-    - '&8[&c&l!&8] &7Puedes desactivar este mensaje'
-    - '    &7haciendo clic aquí.'
+    - '&8[&c&l!&8] &7Puedes desactivar este mensaje dando'
+    - '    &7clic aquí o en menú de &a/ajustes'
   like:  
     Label: "&#ffc61a(&#ffff00☆☆☆&#ffc61a)"
     ClickAction: 'RUN_COMMAND'

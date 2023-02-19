@@ -76,6 +76,10 @@ public class Commands implements CommandExecutor {
 	}
 	private boolean follow(CommandSender s, String[] a) {
 		if(!(s instanceof Player p)) return true; 
+		if(!p.hasPermission("nekoplots.follow")) {
+			p.sendMessage("§cError: Permisos insuficientes.");
+			return true;
+		}
 		if(a.length == 0) {
 			p.sendMessage(plugin.getUtils().color("&fIntroduce el nombre de un jugador."));
 			return true;

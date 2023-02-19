@@ -1,8 +1,15 @@
-LIKE_MESSAGE_STATE_ENABLED: "Has &cdesactivado &flas sugerencias de votación de parcelas."
-LIKE_MESSAGE_STATE_DISABLED: "Has &aactivado &flas sugerencias de votación de parcelas."
+LIKE_MESSAGE_STATE_ENABLED: "Has &aactivado &flas sugerencias de votación de parcelas."
+LIKE_MESSAGE_STATE_DISABLED: "Has &cdesactivado &flas sugerencias de votación de parcelas."
 
+FOLLOW_PLAYER_NOT_IN_PLOT: "&8[&6P2&8] &7%player% no está dentro de ninguna parcela."
+FOLLOW_PLAYER_NOT_ALLOWED: "&8[&6P2&8] &7No puedes hacer esto con este jugador."
+FOLLOW_STATE_ENABLED: "Has &aactivado &fel seguimiento de parcela de jugadores."
+FOLLOW_STATE_DISABLED: "Has &cdesactivado &fel seguimiento de parcela de jugadores."
+
+PLOT_NOT_ACCESS: "&8[&6P2&8] &cNo tienes permiso para ir a esta parcela."
 PLOT_NAMING_SUCCESFULL: "&8[&6P2&8] &7Nombre de parcela actualizado."
 PLOT_NAMING_CANCELLED: "&8[&6P2&8] &7Acción cancelada."
 PLOT_NAMING_DELETED: "&8[&6P2&8] &7Nombre de parcela eliminado."
 NO_PLOTS: "&8[&6P2&8] &cEste jugador no tiene ninguna parcela a la que puedas ir."
+PLAYER_NO_PLOTS: "&8[&6P2&8] &7Usa &#d9d9d9/p auto &7para conseguir una parcela."
 PLAYER_NOT_FOUND: "&8[&6P2&8] &cJugador no encontrado: &7%player%&c."
