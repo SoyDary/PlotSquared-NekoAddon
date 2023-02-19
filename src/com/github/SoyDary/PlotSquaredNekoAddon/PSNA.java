@@ -61,6 +61,8 @@ public class PSNA extends JavaPlugin{
 		if(Bukkit.getPluginManager().isPluginEnabled("Essentials")) this.essentials = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		getServer().getPluginCommand("plotsquared-nekoaddon").setExecutor(commands);	
 		getServer().getPluginCommand("starboard").setExecutor(commands);	
+		getServer().getPluginCommand("follow").setExecutor(commands);	
+		getServer().getPluginCommand("togglefollow").setExecutor(commands);			
 		getServer().getPluginCommand("plotsquared-nekoaddon").setTabCompleter(new CommandCompleter(this));
 		getServer().getPluginCommand("starboard").setTabCompleter(new CommandCompleter(this));
 		if(     config.getBoolean("GamemodeSettings.enabled") 

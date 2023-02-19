@@ -46,6 +46,9 @@ public class PAPI_Extension extends PlaceholderExpansion {
     
 	@Override
     public String onPlaceholderRequest(Player p, String id) {
+		if(id.equals("follow_state")) {
+			return ""+plugin.getData().getFollowState(p.getUniqueId().toString());
+		}
 		if(id.startsWith("starboard_")) {
 			if(p == null) return null;
 			String tag = id.split("starboard_")[1];

@@ -64,6 +64,18 @@ public class Data {
 		return name;
 	}
 	
+	public boolean getFollowState(String uuid) {
+		FileConfiguration config = getConfiguration(uuid);
+		String state = config.getString("AllowedFollow");	
+		if(state != null && state.equals("DISABLED")) return false;
+		return true;
+	}
+	public void setFollowState(String uuid, Boolean state) {
+		FileConfiguration config = getConfiguration(uuid);
+		config.set("AllowedFollow", state ? "ENABLED" : "DISABLED");
+		saveConfig(uuid);	
+	}
+	
 	public boolean getLikeMessageState(String uuid) {
 		FileConfiguration config = getConfiguration(uuid);
 		String state = config.getString("LikeMessage");	

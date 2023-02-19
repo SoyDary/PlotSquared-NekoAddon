@@ -74,7 +74,7 @@ public class NekoPlot {
 	
 	public void teleportPlayer(Player p, TeleportCause cause) {
 		if(!canJoin(p)) {
-			p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &cNo puedes ir a esta parcela porque fuiste denegado de ella."));		
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("PLOT_NOT_ACCESS"), p, plot));		
 			return;
 		}
 		plot.teleportPlayer(BukkitUtil.adapt(p), cause, null);

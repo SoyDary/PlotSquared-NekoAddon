@@ -71,7 +71,7 @@ public class Events implements Listener{
 				e.setCancelled(true);	
 				PlotsMenu menu = new PlotsMenu(p, p.getUniqueId(), MenuType.Owned, 0);
 				if(menu.plots.isEmpty()) {
-					p.sendMessage(plugin.getUtils().color("&8[&6P2&8] &7Usa &#d9d9d9/p auto &7para conseguir una parcela."));
+					p.sendMessage(plugin.getUtils().component(plugin.messages.getString("PLAYER_NO_PLOTS"), p, null));
 					return;
 				}
 				p.openInventory(menu.getInventory());		

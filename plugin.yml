@@ -3,7 +3,7 @@ main: com.github.SoyDary.PlotSquaredNekoAddon.PSNA
 depend: [PlotSquared, PlaceholderAPI]
 softdepend: [ProtocolLib, Essentials]
 author: Dariela
-version: 2.0.7
+version: 2.0.8
 api-version: 1.13
 commands:
  plotsquared-nekoaddon:
@@ -11,3 +11,8 @@ commands:
   aliases: [psna, nekoplots]
  starboard:
   description: Menú de las mejores parcelas
+ follow:
+  aliases: [ptp]
+  description: Visita la parcela en la que se encuentra un jugador
+ togglefollow:
+  description: Activa y desactiva el seguimiento a tu parcela de otros jugadores

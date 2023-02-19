@@ -1,5 +1,6 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,9 +12,12 @@ import com.github.SoyDary.PlotSquaredNekoAddon.PSNA;
 import com.github.SoyDary.PlotSquaredNekoAddon.Gui.PlotsMenu;
 import com.github.SoyDary.PlotSquaredNekoAddon.Objects.NekoPlot;
 import com.github.SoyDary.PlotSquaredNekoAddon.Utils.Enums.MenuType;
+import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.configuration.adventure.text.minimessage.Template;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.Rating;
 
 public class Commands implements CommandExecutor {
@@ -61,9 +65,51 @@ public class Commands implements CommandExecutor {
 			p.openInventory(menu.getInventory());
 			return true;
 		}
+		if(cmd.getName().equals("togglefollow")) {
+			if(!(s instanceof Player p)) return true; 
+			return toggleFollow(p);
+		}
+		if(cmd.getName().equals("follow")) {
+			return follow(s, a);
+		}
 		return false;
 	}
-	
+	private boolean follow(CommandSender s, String[] a) {
+		if(!(s instanceof Player p)) return true; 
+		if(a.length == 0) {
+			p.sendMessage(plugin.getUtils().color("&fIntroduce el nombre de un jugador."));
+			return true;
+		}
+		Player op = Bukkit.getPlayer(a[0]);
+		if(op == null) {
+			p.sendMessage(plugin.getUtils().color("&cError: &4Jugador no encontrado."));
+			return true;
+		}
+		Boolean state = plugin.getData().getFollowState(op.getUniqueId().toString());
+		if(!state && !p.hasPermission("nekoplots.follow.bypass")) {
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("FOLLOW_PLAYER_NOT_ALLOWED").replaceAll("%player%", op.getName()), op, null));
+			return true;
+		}
+		Plot plot = BukkitUtil.adapt(op).getCurrentPlot();
+		if(plot == null) {
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("FOLLOW_PLAYER_NOT_IN_PLOT").replaceAll("%player%", op.getName()), op, plot));
+			return true;
+		}
+		NekoPlot nekoplot = new NekoPlot(plot);
+		nekoplot.teleportPlayer(p, TeleportCause.COMMAND_VISIT);
+		return true;
+	}
+	private boolean toggleFollow(Player p) {
+		Boolean state = plugin.getData().getFollowState(p.getUniqueId().toString());
+		if(state) {
+			plugin.getData().setFollowState(p.getUniqueId().toString(), false);
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("FOLLOW_STATE_DISABLED"), p, null));
+		} else {
+			plugin.getData().setFollowState(p.getUniqueId().toString(), true);
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("FOLLOW_STATE_ENABLED"), p, null));
+		}
+		return true;
+	}
 	private boolean getSkull(CommandSender s, String[] a, String label) {
 		if(!(s instanceof Player p)) return true;
 		if(!p.hasPermission("nekoplots.admin")) {
@@ -87,13 +133,13 @@ public class Commands implements CommandExecutor {
 	
 	private boolean starboardAlerts(CommandSender s, String[] a) {
 		if(!(s instanceof Player p)) return true; 
-		Boolean state = plugin.getData().getLikeMessageState(p.getUniqueId().toString());;
+		Boolean state = plugin.getData().getLikeMessageState(p.getUniqueId().toString());
 		if(state) {
 			plugin.getData().setLikeMessgeState(p.getUniqueId().toString(), false);
-			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("LIKE_MESSAGE_STATE_ENABLED"), p, null));
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("LIKE_MESSAGE_STATE_DISABLED"), p, null));
 		} else {
 			plugin.getData().setLikeMessgeState(p.getUniqueId().toString(), true);
-			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("LIKE_MESSAGE_STATE_DISABLED"), p, null));
+			p.sendMessage(plugin.getUtils().component(plugin.messages.getString("LIKE_MESSAGE_STATE_ENABLED"), p, null));
 		}
 		return true;
 	}
@@ -120,6 +166,7 @@ public class Commands implements CommandExecutor {
 	    }
 	    player.sendMessage(TranslatableCaption.of("ratings.rating_applied"), new Template[] { Template.of("plot", nekoplot.plot.getId().toString()) });
 	    Rating rating = new Rating(10);
+	    plugin.plotsAPI.getPlotSquared().getEventDispatcher().callRating(player, nekoplot.plot, rating);
 	    nekoplot.plot.addRating(p.getUniqueId(), rating);
 		return true;
 		

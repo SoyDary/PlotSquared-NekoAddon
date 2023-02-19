@@ -11,6 +11,7 @@ import com.google.common.eventbus.Subscribe;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
 import com.plotsquared.core.events.PlayerLeavePlotEvent;
+import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.FlyFlag;
 
@@ -26,6 +27,16 @@ public class PlotsListener {
 		this.plugin = plugin;
 	}
 	
+	@Subscribe
+	public void onPlotRateEvent(PlotRateEvent e) {
+		Player p = (Player) e.getRater().getPlatformPlayer();
+		Plot plot = e.getPlot();
+		if(plot.getOwners().contains(DBFunc.SERVER)) return;
+		if(tasks.containsKey(p)) Bukkit.getScheduler().cancelTask(tasks.get(p));
+		Player owner = Bukkit.getPlayer(plot.getOwner());
+		if(owner != null) owner.sendActionBar(plugin.getUtils().color("&e☆ &f&oRecibiste una estrella de "+p.getName()+" &e☆"));
+		
+	}
 	@Subscribe
 	public void onPlayerLeavePlotEvent(PlayerLeavePlotEvent e) {
 		Player p = (Player) e.getPlotPlayer().getPlatformPlayer();
@@ -43,10 +54,12 @@ public class PlotsListener {
 			if(!plot.getOwners().contains(p.getUniqueId()) && !plot.getLikes().containsKey(p.getUniqueId())) {
 		        int taskid = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {	        
 		            @Override
-		            public void run() {	         
-		            	Component message = plugin.getUtils().component(plugin.config.getString("LikeMessage.message"), p, plot);
-		            	p.sendMessage(message);
-		            	tasks.remove(p);
+		            public void run() {	
+		            	if(tasks.containsKey(p)) {
+			            	Component message = plugin.getUtils().component(plugin.config.getString("LikeMessage.message"), p, plot);
+			            	p.sendMessage(message);
+			            	tasks.remove(p);
+		            	}
 		            }         
 		        }, plugin.getDataManager().like_message_delay*20);
 		        tasks.put(p, taskid);
