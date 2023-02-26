@@ -1,7 +1,9 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Objects;
 
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import com.github.SoyDary.PlotSquaredNekoAddon.PSNA;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -9,6 +11,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.query.PlotQuery;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 public class PAPI_Extension extends PlaceholderExpansion {
@@ -46,6 +49,18 @@ public class PAPI_Extension extends PlaceholderExpansion {
     
 	@Override
     public String onPlaceholderRequest(Player p, String id) {
+		if(id.toLowerCase().startsWith("skin")) {
+			id = PlaceholderAPI.setBracketPlaceholders(p, id);
+			String[] a = id.split(";");
+			String name = a.length == 1 ? (p == null ? "null" : p.getName()) : a[1];
+			OfflinePlayer op = plugin.getUtils().getUser(name);
+			if(op == null) return "null";
+			String skin = "http://textures.minecraft.net/texture/"+plugin.getData().getSkinID(op.getUniqueId().toString());
+			if(a[0].equalsIgnoreCase("skin_encoded")) {
+				return Base64Coder.encodeString(String.format("{textures:{SKIN:{url:\"%s\"}}}", skin));
+			}
+		    return skin;
+		}
 		if(id.equals("follow_state")) {
 			return ""+plugin.getData().getFollowState(p.getUniqueId().toString());
 		}

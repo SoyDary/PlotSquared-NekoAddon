@@ -121,13 +121,19 @@ public class Data {
 	public ItemStack getPlayerHead(String uuid) {
 		String skin = this.getSkinID(uuid);
 		if(skin != null) return plugin.getUtils().getHead(skin, UUID.fromString(uuid));		
+		skin = plugin.getUtils().getMojangSkinID(getPlayerName(UUID.fromString(uuid)));
+		if(skin != null) {
+			FileConfiguration config = getConfiguration(uuid);
+			config.set("SkinID", skin);
+			saveConfig(uuid);	
+			return plugin.getUtils().getHead(skin, UUID.fromString(uuid));
+		}
 		ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 	    SkullMeta headMeta = (SkullMeta) head.getItemMeta();
 	    PlayerProfile profile = Bukkit.createProfile(getPlayerName(UUID.fromString(uuid)));
 	    headMeta.setPlayerProfile(profile);
 	    head.setItemMeta(headMeta); 
 	    return head;
-		
 	}
 	
 	public void setProfileColor(String uuid, ProfileColor color) {
@@ -161,7 +167,6 @@ public class Data {
 	        e.printStackTrace();
 	    }
 	}
-	
 	
 	public FileConfiguration getConfiguration(String uuid) {
 		File file = new File(plugin.getDataFolder()+"/data/"+uuid+".yml");

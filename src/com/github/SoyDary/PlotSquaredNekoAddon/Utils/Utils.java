@@ -1,6 +1,15 @@
 package com.github.SoyDary.PlotSquaredNekoAddon.Utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +32,9 @@ import com.github.SoyDary.PlotSquaredNekoAddon.PSNA;
 import  com.github.SoyDary.PlotSquaredNekoAddon.Objects.NekoPlot;
 import com.github.SoyDary.PlotSquaredNekoAddon.Utils.ComponentUtil.ComponentSection;
 import com.github.SoyDary.PlotSquaredNekoAddon.Utils.ComponentUtil.CustomComponent;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.plotsquared.core.plot.Plot;
 
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -40,6 +52,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 public class Utils {
 	PSNA plugin;
 	private LegacyComponentSerializer lcs;
+	private Map<String, String> premiumUUIDS;
 	private TextReplacementConfig italic;
 	private List<Material> validItems;
 	private Pattern hex_parse_pattern = Pattern.compile("&x(&[A-Fa-f0-9]){6}");
@@ -48,6 +61,7 @@ public class Utils {
 		this.plugin = plugin;
 		this.lcs = LegacyComponentSerializer.builder().character('&').hexCharacter('#').extractUrls().build();
 		this.italic = TextReplacementConfig.builder().match("&<ITALITC> ").replacement("").build();
+		this.premiumUUIDS = new HashMap<String, String>();
 		loadItems();
 	}
 	
@@ -268,5 +282,60 @@ public class Utils {
 	    builder.append(plugin.getUtils().color(" &8[&#ff1a1a✖&8]").hoverEvent(plugin.getUtils().color("&cCancelar")).clickEvent(ClickEvent.runCommand("/psna plotname cancel")));
 	    p.sendMessage(builder.build());    
 	}
+	
+	public String getMojangSkinID(String name) {
+		String uuid = getPremiumrUUID(name);
+		if(uuid == null) return null;
+		try {
+			String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/"+uuid;	
+			URLConnection connection = new URL(PROFILE_URL).openConnection();
+			InputStream in = connection.getInputStream();
+			String text = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+			JsonObject o = new Gson().fromJson(text, JsonObject.class);
+			JsonArray arr = o.getAsJsonArray("properties");
+			String texture = null;
+			for(int i = 0; i < arr.size(); i++) {
+				JsonObject json = arr.get(i).getAsJsonObject();
+				if(!json.get("name").getAsString().equals("textures")) continue;
+				String jsonTextures = new String(Base64.getDecoder().decode(json.get("value").getAsString()));
+				JsonObject object = new Gson().fromJson(jsonTextures, JsonObject.class);
+				texture = object.get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").getAsString();
+				break;
+			}
+			return texture.split("texture/")[1];
+		} catch (Exception e) {}
+		return null;
+	}
+	
+    private String getPremiumrUUID(String name) {
+    	if(premiumUUIDS.containsKey(name)) return premiumUUIDS.get(name);
+    	try {
+        	Gson JSON_PARSER = new Gson();
+        	String GET_UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?t=0";
+            String response = getRawJsonResponse(new URL(String.format(GET_UUID_URL, name)));       
+            JsonObject o = JSON_PARSER.fromJson(response, JsonObject.class);
+            if (o != null) {
+            	 String uuid = o.get("id").getAsString();
+            	 premiumUUIDS.put(name, uuid);
+            	 return uuid;
+            }
+    	} catch (Exception e) {}
+    	premiumUUIDS.put(name, null);
+    	return null;
+    }
+    private String getRawJsonResponse(URL u) throws IOException {
+    	try {
+            HttpURLConnection con = (HttpURLConnection) u.openConnection();
+            con.setDoInput(true);
+            con.setConnectTimeout(2000);
+            con.setReadTimeout(2000);
+            con.connect();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String response = in.readLine();
+            in.close();
+            return response;
+    	} catch (Exception e) {}
+    	return null;
+    }
 	
 }

@@ -36,12 +36,13 @@ public class NekoPlot {
 	public String ownerName;
 	public String ownerUUID;
 	public String tempNaming;
-	public Plot plot;
+	public Plot plot = null;
 	public ProfileColor profileColor;
 	
 	
 
 	public NekoPlot(Plot plot) {
+		if(plot == null) return;
 		this.plot = plot;
 		this.path = plot.getArea().getWorldName()+"_"+plot.getId().toString();
 		this.ownerName = plugin.getData().getPlayerName(plot.getOwner());
@@ -50,10 +51,7 @@ public class NekoPlot {
 	}
 	
 	public NekoPlot(String tag) {
-		if(tag == null) {
-			this.plot = null;
-			return;
-		}	
+		if(tag == null) return;		
 		try {
 			this.plot = Plot.fromString(plugin.plotsAPI.getPlotSquared().getPlotAreaManager().getPlotAreaByString(tag.split("_")[0]), tag.split("_")[1]);
 		} catch(Exception e) {}

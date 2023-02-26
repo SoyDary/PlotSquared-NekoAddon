@@ -46,10 +46,15 @@ public class Commands implements CommandExecutor {
 					return plotName(s, a);
 				}
 				case "like":{
-					return remoteLike(s, a);
+					return remoteLike(cmd, s, a);
 				}
 				}
 			}	
+			return true;
+		}
+		if(cmd.getName().equals("star")) {
+			if(!(s instanceof Player p)) return true; 
+			remoteLike(cmd, s, a);
 			return true;
 		}
 		if(cmd.getName().equals("starboard")) {
@@ -74,6 +79,12 @@ public class Commands implements CommandExecutor {
 		}
 		return false;
 	}
+	
+	private boolean test(CommandSender s, String[] a) {
+		s.sendMessage(plugin.getUtils().color(plugin.prefix+" &f"+plugin.getDescription().getVersion()));
+		return true;
+	}
+	
 	private boolean follow(CommandSender s, String[] a) {
 		if(!(s instanceof Player p)) return true; 
 		if(!p.hasPermission("nekoplots.follow")) {
@@ -147,11 +158,13 @@ public class Commands implements CommandExecutor {
 		}
 		return true;
 	}
-	private boolean remoteLike(CommandSender s, String[] a) {
-		if(!(s instanceof Player p) || !p.hasPermission("plots.rate")) return true; 
-		String arg = a[1];
+	
+	private boolean remoteLike(Command command, CommandSender s, String[] a) {
+		if(!(s instanceof Player p) || !p.hasPermission("plots.rate")) return true; 	
+		boolean current = command.getName().equals("star") ? a.length == 0 : a.length == 1;
 		PlotPlayer<?> player = plugin.plotsAPI.wrapPlayer(p.getUniqueId());	
-		NekoPlot nekoplot = new NekoPlot(arg);	
+		NekoPlot nekoplot = current ? new NekoPlot(player.getCurrentPlot()) : new NekoPlot(command.getName().equals("star") ? a[0] : a[1]);	
+
 		if(nekoplot.plot == null) {
 			player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"), new Template[0]);
 			return true;
@@ -174,10 +187,6 @@ public class Commands implements CommandExecutor {
 	    nekoplot.plot.addRating(p.getUniqueId(), rating);
 		return true;
 		
-	}
-	private boolean test(CommandSender s, String[] a) {
-		s.sendMessage(plugin.getUtils().color(plugin.prefix+" &f"+plugin.getDescription().getVersion()));
-		return true;
 	}
 	
 	private boolean plotName(CommandSender s, String[] a) {

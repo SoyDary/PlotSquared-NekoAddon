@@ -62,7 +62,8 @@ public class PSNA extends JavaPlugin{
 		getServer().getPluginCommand("plotsquared-nekoaddon").setExecutor(commands);	
 		getServer().getPluginCommand("starboard").setExecutor(commands);	
 		getServer().getPluginCommand("follow").setExecutor(commands);	
-		getServer().getPluginCommand("togglefollow").setExecutor(commands);			
+		getServer().getPluginCommand("togglefollow").setExecutor(commands);		
+		getServer().getPluginCommand("star").setExecutor(commands);		
 		getServer().getPluginCommand("plotsquared-nekoaddon").setTabCompleter(new CommandCompleter(this));
 		getServer().getPluginCommand("starboard").setTabCompleter(new CommandCompleter(this));
 		if(     config.getBoolean("GamemodeSettings.enabled") 
