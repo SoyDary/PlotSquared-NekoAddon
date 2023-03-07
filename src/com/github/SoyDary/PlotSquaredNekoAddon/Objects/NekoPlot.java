@@ -82,7 +82,7 @@ public class NekoPlot {
 		if(!p.hasPermission("multiverse.access."+plot.getWorldName())) return false;
 		if(plot.isOwner(p.getUniqueId()) || plot.getMembers().contains(p.getUniqueId())) return true;
 		if(plot.isDenied(p.getUniqueId()) && !p.hasPermission("plots.visit.denied")) return false;
-		if(plot.getDenied().contains(DBFunc.EVERYONE) && !plot.isAdded(p.getUniqueId()))  return false;
+		if(plot.getDenied().contains(DBFunc.EVERYONE) && !plot.isAdded(p.getUniqueId()) && !p.hasPermission("plots.visit.denied"))  return false;
 		return true;
 	}
 	public ItemStack getItem(Player viewer, MenuType type, Boolean isMainPlot) {
